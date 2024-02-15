@@ -1,3 +1,5 @@
+from doctest import master
+from ssl import Options
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
@@ -5,13 +7,15 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
 
+import Vars_ant
+
 class Gui():
     def __init__(self):
         self.initFrames()
         self.initInstr(self.InstrFrame)
         self.InitPara(self.ParaFrameS)
 
-    def initFrames(self):
+    def initFrames(self): #Oberflächendefinition
         self.root = Tk()
         self.root.title("Antenna Designer")
         self.root.geometry("1000x800")
@@ -52,10 +56,10 @@ class Gui():
     def initInstr(self,InstrFrame):
         self.button = ttk.Button(master=InstrFrame, text='Quit', command=self._quit)
         self.button.grid(row=2,column=1)
-        button1 = ttk.Button(master=InstrFrame, text='Let\'s Go', command=self.opt_impedance)
+        button1 = ttk.Button(master=InstrFrame, text='Let\'s Go', command=self.opt_impedance) #IMPORTANT Aktion - Berechne
         button1.grid(row=2,column=0)
 
-    def InitPara(self,ParaFrame):
+    def InitPara(self,ParaFrame): 
 
         self.label1=ttk.Label(master=ParaFrame, text="Frequenz/MHz  ")
         self.label1.grid(row=0,column=1)
@@ -67,18 +71,33 @@ class Gui():
         self.input2 = ttk.Entry(master=ParaFrame, width=8)
         self.input2.insert(END,"3")
         self.input2.grid(row=1,column=2)
+        #ab hier eigenes System
+        self.label3=ttk.Label(master=ParaFrame, text="Antennentyp") 
+        self.label3.grid(row=2,column=1)
+        
+        
+        #Drop-Down Menü 
+
+        Drop_Down_Var = StringVar(ParaFrame)
+        Drop_Down_Var.set(Vars_ant.antenna_list[0])
+        
+        
+        self.input3 = OptionMenu(ParaFrame, Drop_Down_Var, *Vars_ant.antenna_list)
+        #self.input3.pack(after=ParaFrame)
+        self.input3.grid(row=2,column=2)
+        
 
 
 
-        self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
-        self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
+        # self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
+        # self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
 
     def _quit(self):
         self.root.quit()     # stops mainloop
         self.root.destroy()  # this is necessary on Windows to prevent
                     # Fatal Python Error: PyEval_RestoreThread: NULL tstate
 
-    def opt_impedance(self):
+    def opt_impedance(self): 
         freq=self.get_freq()
         rad=self.get_radius()
         self.antenna_class.set_radius(rad)
@@ -111,11 +130,13 @@ class Gui():
         plt.grid()
         self.canvas.draw()
 
+#Definitionen der Übergaben aus dem self-Bildschirmobjekt
     def get_freq(self):
         return float(self.input1.get())*1e6
+    
     def get_radius(self):
         return float(self.input2.get())*1e-3/2
-
+    
     def set_antenna_class(self,antenna_class):
         self.antenna_class=antenna_class
         self.antenna_name=antenna_class.get_antenna_name()

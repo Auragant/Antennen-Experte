@@ -2,6 +2,7 @@ from tkinter import mainloop
 import sici
 import GUI
 
+
 gui=GUI.Gui()
 
 ant=sici.dipole_lam2()
