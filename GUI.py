@@ -15,7 +15,7 @@ class Gui():
         self.initInstr(self.InstrFrame)
         self.InitPara(self.ParaFrameS)
 
-    def initFrames(self): #Oberflächendefinition
+    def initFrames(self): #Oberflï¿½chendefinition
         self.root = Tk()
         self.root.title("Antenna Designer")
         self.root.geometry("1000x800")
@@ -76,21 +76,18 @@ class Gui():
         self.label3.grid(row=2,column=1)
         
         
-        #Drop-Down Menü 
+        #Drop-Down Menï¿½ 
 
         Drop_Down_Var = StringVar(ParaFrame)
         Drop_Down_Var.set(Vars_ant.antenna_list[0])
         
         
         self.input3 = OptionMenu(ParaFrame, Drop_Down_Var, *Vars_ant.antenna_list)
-        #self.input3.pack(after=ParaFrame)
         self.input3.grid(row=2,column=2)
         
 
-
-
-        # self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
-        # self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
+        self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
+        self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
 
     def _quit(self):
         self.root.quit()     # stops mainloop
@@ -130,7 +127,7 @@ class Gui():
         plt.grid()
         self.canvas.draw()
 
-#Definitionen der Übergaben aus dem self-Bildschirmobjekt
+#Definitionen der ï¿½bergaben aus dem self-Bildschirmobjekt
     def get_freq(self):
         return float(self.input1.get())*1e6
     
