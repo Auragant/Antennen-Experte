@@ -84,7 +84,7 @@ class Gui():
         
         self.input3 = OptionMenu(ParaFrame, Drop_Down_Var, *Vars_ant.antenna_list)
         self.input3.grid(row=2,column=2)
-        
+        #numb = 
 
         self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
         self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
@@ -134,6 +134,17 @@ class Gui():
     def get_radius(self):
         return float(self.input2.get())*1e-3/2
     
+    def get_antenna(self):
+        self.antenna = self.input3.get()
+        match self.antenna:
+            case 'Dipol':
+                numb = 1
+            case 'Yagi-Uda':
+                numb = 2
+            case _:
+                return;
+        return antenna
+
     def set_antenna_class(self,antenna_class):
         self.antenna_class=antenna_class
         self.antenna_name=antenna_class.get_antenna_name()
