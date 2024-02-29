@@ -8,14 +8,16 @@ from tkinter import ttk
 from tkinter import scrolledtext
 
 import Vars_ant
+import sici
 
 class Gui():
     def __init__(self):
         self.initFrames()
         self.initInstr(self.InstrFrame)
         self.InitPara(self.ParaFrameS)
+        
 
-    def initFrames(self): #Oberfl�chendefinition
+    def initFrames(self): #Oberflaechendefinition
         self.root = Tk()
         self.root.title("Antenna Designer")
         self.root.geometry("1000x800")
@@ -76,18 +78,31 @@ class Gui():
         self.label3.grid(row=2,column=1)
         
         
-        #Drop-Down Men� 
+        # #Drop-Down Menue 
 
-        Drop_Down_Var = StringVar(ParaFrame)
-        Drop_Down_Var.set(Vars_ant.antenna_list[0])
+        # Drop_Down_Var = StringVar(ParaFrame)
+        # Drop_Down_Var.set(Vars_ant.antenna_list[0])
+        # self.input3 = OptionMenu(ParaFrame, Drop_Down_Var, *Vars_ant.antenna_list)
+        # #self.input3.pack()
+        # self.input3.grid(row=2,column=2)
         
+        # #Radio Button Menue
+
+        # self.rad_var = IntVar()
+        # self.rad_var.set(1)
         
-        self.input3 = OptionMenu(ParaFrame, Drop_Down_Var, *Vars_ant.antenna_list)
-        self.input3.grid(row=2,column=2)
-        #numb = 
+        # for txt, val in Vars_ant.antenna_list:
+        #     Radiobutton(ParaFrame, text=txt, padx = 20,variable=self.rad_var, 
+        #         command=self.set_antenna(),
+        #         value=val).pack(anchor=W)
+
 
         self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
         self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
+
+    def set_antenna(self):
+        pass
+        
 
     def _quit(self):
         self.root.quit()     # stops mainloop
@@ -97,6 +112,7 @@ class Gui():
     def opt_impedance(self): 
         freq=self.get_freq()
         rad=self.get_radius()
+        self.set_antenna_class(self.get_antenna())
         self.antenna_class.set_radius(rad)
         self.l,res_text=self.antenna_class.opt_refl(float(self.input1.get()))
 
@@ -127,24 +143,17 @@ class Gui():
         plt.grid()
         self.canvas.draw()
 
-#Definitionen der �bergaben aus dem self-Bildschirmobjekt
+#Definitionen der Uebergaben aus dem self-Bildschirmobjekt
     def get_freq(self):
         return float(self.input1.get())*1e6
     
     def get_radius(self):
         return float(self.input2.get())*1e-3/2
-    
+
     def get_antenna(self):
-        self.antenna = self.input3.get()
-        match self.antenna:
-            case 'Dipol':
-                numb = 1
-            case 'Yagi-Uda':
-                numb = 2
-            case _:
-                return;
-        return antenna
+        self.antenna_type = sici.dipole_lam2()
+        return self.antenna_type()
 
     def set_antenna_class(self,antenna_class):
         self.antenna_class=antenna_class
-        self.antenna_name=antenna_class.get_antenna_name()
+        self.antenna_name=self.antenna_class.get_antenna_name()

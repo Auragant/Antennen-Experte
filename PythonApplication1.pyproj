@@ -28,6 +28,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="sici.py" />
+    <Compile Include="yaud.py" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

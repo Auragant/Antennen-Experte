@@ -8,8 +8,8 @@ gui=GUI.Gui()
 
 
 #TODE GET RID OF:
-ant=Vars_ant.class_antenna_list[gui.get_antenna()]
-gui.set_antenna_class(ant)
+# ant=Vars_ant.class_antenna_list[gui.get_antenna()]
+# gui.set_antenna_class(ant)
 #
 
 mainloop()
