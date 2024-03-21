@@ -9,12 +9,14 @@ from tkinter import scrolledtext
 
 import Vars_ant
 import sici
+import yaud
 
 class Gui():
     def __init__(self):
         self.initFrames()
         self.initInstr(self.InstrFrame)
         self.InitPara(self.ParaFrameS)
+        self.antenna_type = sici.dipole_lam2()
         
 
     def initFrames(self): #Oberflaechendefinition
@@ -52,6 +54,20 @@ class Gui():
         self.canvas = FigureCanvasTkAgg(self.Graph, master=self.GraphFrame)
         self.canvas.get_tk_widget().grid(row=0,column=0,sticky="nsew")
 
+        # Filemenu 
+        self.menu = Menu(self.root)
+        self.root.config(menu=self.menu)
+        self.main_menu = Menu(self.menu)
+        self.menu.add_cascade(label="Berechnung", menu=self.main_menu)
+        self.main_menu.add_command(label="Dipole", command=self.set_antenna(1))
+        self.main_menu.add_command(label="Yagi-Uda", command=self.set_antenna(2))
+        self.main_menu.add_separator()
+        self.main_menu.add_command(label="Exit", command=self._quit)
+
+        self.helpmenu = Menu(self.menu)
+        self.menu.add_cascade(label="Help", menu=self.helpmenu)
+        self.helpmenu.add_command(label="About...", command=self.About())
+
         self.root.bind('<<visu_flag_next>>',lambda e: Visu()) # virtuelles tkinter-Event mit dem Hauptfenster verknuepfen
         self.root.protocol("WM_DELETE_WINDOW", self._quit) # Routine fuer das Schliessen des Hauptfensters
 
@@ -60,6 +76,9 @@ class Gui():
         self.button.grid(row=2,column=1)
         button1 = ttk.Button(master=InstrFrame, text='Let\'s Go', command=self.opt_impedance) #IMPORTANT Aktion - Berechne
         button1.grid(row=2,column=0)
+
+    def About(self):
+        pass
 
     def InitPara(self,ParaFrame): 
 
@@ -73,9 +92,9 @@ class Gui():
         self.input2 = ttk.Entry(master=ParaFrame, width=8)
         self.input2.insert(END,"3")
         self.input2.grid(row=1,column=2)
-        #ab hier eigenes System
-        self.label3=ttk.Label(master=ParaFrame, text="Antennentyp") 
-        self.label3.grid(row=2,column=1)
+        # #ab hier eigenes System
+        # self.label3=ttk.Label(master=ParaFrame, text="Antennentyp") 
+        # self.label3.grid(row=2,column=1)
         
         
         # #Drop-Down Menue 
@@ -100,8 +119,15 @@ class Gui():
         self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
         self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
 
-    def set_antenna(self):
-        pass
+    def set_antenna(self, ant_numb):
+        if ant_numb == 1:
+            self.antenna_type = sici.dipole_lam2()
+        elif ant_numb == 2:
+            pass
+            self.antenna_type = yaud.yagi_uda_4()
+        else:
+            self._quit()
+        
         
 
     def _quit(self):
@@ -112,37 +138,43 @@ class Gui():
     def opt_impedance(self): 
         freq=self.get_freq()
         rad=self.get_radius()
+        # self.set_antenna_class()
         self.set_antenna_class(self.get_antenna())
         self.antenna_class.set_radius(rad)
-        self.l,res_text=self.antenna_class.opt_refl(float(self.input1.get()))
+        
+        #Unterscheidung nach Antennen mit vollem Strahlungswiederstand und hergebrachten Formeln
+        if(self.antenna_class != yaud.yagi_uda_4):
+            self.l,res_text=self.antenna_class.opt_refl(float(self.input1.get()))
 
-        self.result_text.insert(index="0.0",chars=res_text)
+            self.result_text.insert(index="0.0",chars=res_text)
 
-        freq=self.get_freq()
-        freqs=np.linspace(0.5*freq,2*freq,101)
+            freq=self.get_freq()
+            freqs=np.linspace(0.5*freq,2*freq,101)
 
-        Rin,Xin,Rm,Xm=self.antenna_class.impedance_f(freqs)
-        Gam=self.antenna_class.reflection2_f(freqs)
-        self.Graph.clf()
-        a=self.Graph.add_subplot(221)
-        plt.plot(freqs,Rm)
-        plt.plot(freqs,Xm)
-        plt.plot(freqs,Rin)
-        plt.plot(freqs,Xin)
+            Rin,Xin,Rm,Xm=self.antenna_class.impedance_f(freqs)
+            Gam=self.antenna_class.reflection2_f(freqs)
+            self.Graph.clf()
+            a=self.Graph.add_subplot(221)
+            plt.plot(freqs,Rm)
+            plt.plot(freqs,Xm)
+            plt.plot(freqs,Rin)
+            plt.plot(freqs,Xin)
 
-        plt.ylim([-300,300])
-        plt.legend(["Rm","Xm","Rin","Xin"])
-        plt.xlabel('Freq')
-        plt.ylabel('Rm und Xm')
-        plt.grid()
+            plt.ylim([-300,300])
+            plt.legend(["Rm","Xm","Rin","Xin"])
+            plt.xlabel('Freq')
+            plt.ylabel('Rm und Xm')
+            plt.grid()
 
-        b=self.Graph.add_subplot(222)
-        plt.plot(freqs,Gam,"k")
-        plt.legend("Gam")
-        plt.ylabel("Reflexion in dB")
-        plt.grid()
-        self.canvas.draw()
-
+            b=self.Graph.add_subplot(222)
+            plt.plot(freqs,Gam,"k")
+            plt.legend("Gam")
+            plt.ylabel("Reflexion in dB")
+            plt.grid()
+            self.canvas.draw()
+        elif(self.antenna_class == yaud.yagi_uda_4):
+            
+            
 #Definitionen der Uebergaben aus dem self-Bildschirmobjekt
     def get_freq(self):
         return float(self.input1.get())*1e6
@@ -151,9 +183,9 @@ class Gui():
         return float(self.input2.get())*1e-3/2
 
     def get_antenna(self):
-        self.antenna_type = sici.dipole_lam2()
-        return self.antenna_type()
-
+        # self.antenna_type = sici.dipole_lam2()
+        return self.antenna_type
+        
     def set_antenna_class(self,antenna_class):
         self.antenna_class=antenna_class
         self.antenna_name=self.antenna_class.get_antenna_name()

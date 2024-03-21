@@ -2,8 +2,8 @@ import sici
 import yaud
 
 antenna_list = [
-    ('Dipol',1),
-    ('Yagi-Uda',2),
+    ('Dipol'),
+    ('Yagi-Uda'),
     ]
 
 #Liste mit den Dateien, f�r die einzelnen Antennen:
