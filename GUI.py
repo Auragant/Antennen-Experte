@@ -57,10 +57,11 @@ class Gui():
         # Filemenu 
         self.menu = Menu(self.root)
         self.root.config(menu=self.menu)
+        
         self.main_menu = Menu(self.menu)
         self.menu.add_cascade(label="Berechnung", menu=self.main_menu)
-        self.main_menu.add_command(label="Dipole", command=self.set_antenna(1))
-        self.main_menu.add_command(label="Yagi-Uda", command=self.set_antenna(2))
+        self.main_menu.add_command(label="Dipole", command=lambda: self._set_antenna(1))
+        self.main_menu.add_command(label="Yagi-Uda", command=lambda: self._set_antenna(2))
         self.main_menu.add_separator()
         self.main_menu.add_command(label="Exit", command=self._quit)
 
@@ -115,16 +116,18 @@ class Gui():
         #         command=self.set_antenna(),
         #         value=val).pack(anchor=W)
 
+        #TODO Boom-Diameter in anhaengigkeit von YAUD
 
         self.result_text=scrolledtext.ScrolledText(master=ParaFrame,width=30,height=5)
         self.result_text.grid(row=40,column=1,columnspan=3,pady=20,sticky="news")
 
-    def set_antenna(self, ant_numb):
+    def _set_antenna(self, ant_numb):
         if ant_numb == 1:
             self.antenna_type = sici.dipole_lam2()
+            
         elif ant_numb == 2:
-            pass
             self.antenna_type = yaud.yagi_uda_4()
+            
         else:
             self._quit()
         
@@ -143,7 +146,7 @@ class Gui():
         self.antenna_class.set_radius(rad)
         
         #Unterscheidung nach Antennen mit vollem Strahlungswiederstand und hergebrachten Formeln
-        if(self.antenna_class != yaud.yagi_uda_4):
+        if(self.antenna_name == "Half Wave Dipole"):
             self.l,res_text=self.antenna_class.opt_refl(float(self.input1.get()))
 
             self.result_text.insert(index="0.0",chars=res_text)
@@ -172,8 +175,12 @@ class Gui():
             plt.ylabel("Reflexion in dB")
             plt.grid()
             self.canvas.draw()
-        elif(self.antenna_class == yaud.yagi_uda_4):
-            
+        elif(self.antenna_name == "Yagi-Uda 4 Elemente"):
+            self.l, res_text=self.antenna_class.Res_yagi_uda(self.input1.get(), self.input2.get(), 5)
+            self.result_text.insert("0.0", chars=res_text)
+        else:
+            self.res_text = "Undefinded Function called"
+            self.result_text.insert("0.0", chars=self.res_text)
             
 #Definitionen der Uebergaben aus dem self-Bildschirmobjekt
     def get_freq(self):
