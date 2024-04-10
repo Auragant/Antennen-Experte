@@ -45,8 +45,6 @@ class yagi_uda_4():
             f_x = 65342.6 * x4 - 4160.88 * x3 + 88.2198 * x2 + 0.0472773 * x + 0.000599967
         return f_x
     
-
-
     def circle_equation(self, x, y):
         """
         Gleichung eines Kreises.
@@ -87,7 +85,7 @@ class yagi_uda_4():
 
         return intersection_points
 
-    def radius_Step4(self):
+    def radius_Step4(self): #Beaware of magic numbers
         """ 
         Bestimmung des Abstandes der Punkt:
         D1 - D2 aus Tabelle 9

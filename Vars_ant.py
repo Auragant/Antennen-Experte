@@ -9,5 +9,5 @@ antenna_list = [
 #Liste mit den Dateien, f�r die einzelnen Antennen:
 class_antenna_list = [
     sici.dipole_lam2(),
-    #yaud.yagi_uda(),
+    yaud.yagi_uda(),
     ]
