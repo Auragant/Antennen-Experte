@@ -95,8 +95,8 @@ class dipole_lam2():
                      method='Bounded')
         print(optr)
         res_text="Reflexion von "+'{:6.1f}'.format(optr.fun)+"dB \n"\
-                +"erreicht bei Länge "+'{:6.4f}'.format(optr.x)+"m\n="\
-                +'{:6.4f}'.format(optr.x/lam)+" Wellenlängen\n\n"
+                +"erreicht bei Laenge "+'{:6.4f}'.format(optr.x)+"m\n="\
+                +'{:6.4f}'.format(optr.x/lam)+" Wellenlaengen\n\n"
         print(res_text)
         self.l=optr.x
         return optr.x,res_text
